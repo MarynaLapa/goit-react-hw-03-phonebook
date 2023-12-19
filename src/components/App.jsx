@@ -4,24 +4,37 @@ import ContactList from "./contactList/ContactList"
 import { nanoid } from 'nanoid'
 import Filter from './filter/Filter'
 import styled from "styled-components"
+
 export class App extends Component {
 
   state = {
-    contacts: [
-      {id: 'id-1', name: 'Rosie Simpson', number: '459-12-56'},
-      {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
-      {id: 'id-3', name: 'Eden Clements', number: '645-17-79'},
-      {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
-    ],
+    contacts: null,
     filter: ''
+  }
+
+  componentDidMount() {
+    const localContacts = localStorage.getItem('contacts');
+    if (localContacts && JSON.parse(localContacts).length > 0) {
+      this.setState({
+        contacts: JSON.parse(localContacts),
+      })
+    } else 
+      this.setState({
+        contacts: null,
+      })
+  }
+
+  componentDidUpdate(prevState) {
+    if (prevState.contacts?.length !== this.state.contacts.length)
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts))
   }
 
   addUserData = (data) => {
     
     const foundUser = this.state.contacts.find(contact =>
-      contact.name.toLowerCase() === data.name.toLowerCase() 
+      contact.name?.toLowerCase() === data.name?.toLowerCase() 
     ) 
-
+       
     if (foundUser) {
        alert(`${data.name} is already in contacts`)
         return;
@@ -64,13 +77,15 @@ export class App extends Component {
           value={this.state.filter}
           onChange={this.handlerChange}
         />
-        <ContactList
-          contacts={
+        {this.state.contacts && (
+          <ContactList
+            contacts={
             this.state.filter.length > 0
               ? this.state.contacts.filter(user => user.name.toLowerCase().includes(this.state.filter.toLowerCase()))
               : this.state.contacts}
           RemoveUser={this.handelerDelete}
-        />
+          />
+        )} 
       </div>
 
     )

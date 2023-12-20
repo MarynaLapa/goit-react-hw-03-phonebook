@@ -8,7 +8,7 @@ import styled from "styled-components"
 export class App extends Component {
 
   state = {
-    contacts: null,
+    contacts: [],
     filter: ''
   }
 
@@ -20,7 +20,7 @@ export class App extends Component {
       })
     } else 
       this.setState({
-        contacts: null,
+        contacts: [],
       })
   }
 
